@@ -1,0 +1,124 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Toggle Button</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 40px;
+      background: #f8f9fa;
+    }
+
+    .toggle-btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .toggle-on {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .toggle-off {
+      background-color: #ccc;
+      color: #333;
+    }
+  </style>
+<script>
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const source = audioCtx.createBufferSource();
+const convolver = audioCtx.createConvolver();
+// 리버브에 사용할 임펄스 응답 파일 로드 (예: IR wav 파일)
+fetch('hall.wav')
+  .then(response => response.arrayBuffer())
+  .then(buffer => audioCtx.decodeAudioData(buffer))
+  .then(decodedIR => {
+    convolver.buffer = decodedIR;
+  });
+  
+fetch('test.mp3')
+  .then(response => response.arrayBuffer())
+  .then(buffer => audioCtx.decodeAudioData(buffer))
+  .then(decodedAudio => {
+    source.buffer = decodedAudio;
+
+    // 3. 노드 연결
+
+    // 4. 재생
+    source.connect(audioCtx.destination);
+ //   source.start();
+  });
+  function play(toggle) {
+
+  if (toggle) {
+    source.start();
+  } else {
+    source.stop();
+  }
+}
+  function reverb(on) {
+  if (on) {
+  // 리버브 선택: room 또는 hall
+	// Dry/Wet routing
+	source.disconnect();
+        source.connect(convolver);
+        convolver.connect(audioCtx.destination);
+
+	console.log("reverb on");
+  } else {
+        source.disconnect();
+        source.connect(audioCtx.destination);
+        console.log("reverb off");
+  }
+}
+</script>
+</head>
+<body>
+test ir hall wav reverb
+<pre>
+  play / stop : 
+  <button id="playButton" class="toggle-btn toggle-off">Play</button>
+  </pre>
+  <pre>
+  reverb : 
+  <button id="toggleButton" class="toggle-btn toggle-off">OFF</button>
+  </pre>
+    <script>
+    const toggleButton = document.getElementById('toggleButton');
+    let isReverbOn = false;
+
+    toggleButton.addEventListener('click', () => {
+      isReverbOn = !isReverbOn;
+      if (isReverbOn) {
+        toggleButton.textContent = 'OFF';
+        toggleButton.classList.remove('toggle-off');
+        toggleButton.classList.add('toggle-on');
+      } else {
+        toggleButton.textContent = 'ON';
+        toggleButton.classList.remove('toggle-on');
+        toggleButton.classList.add('toggle-off');
+      }
+      reverb(isReverbOn);
+    });
+        const playButton = document.getElementById('playButton');
+    let isPlayOn = false;
+    playButton.addEventListener('click', () => {
+      isPlayOn = !isPlayOn;
+      if (isPlayOn) {
+        playButton.textContent = 'Pause';
+        playButton.classList.remove('toggle-off');
+        playButton.classList.add('toggle-on');
+      } else {
+        playButton.textContent = 'Play';
+        playButton.classList.remove('toggle-on');
+        playButton.classList.add('toggle-off');
+      }
+      play(isPlayOn);
+    });
+    </script>
+</body>
+</html>
