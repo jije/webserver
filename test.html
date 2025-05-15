@@ -106,17 +106,24 @@ function play(toggle) {
   }
 }
 
-function reverb(on) {
-  if (on) {
+function reverb(room, hall) {
+  if (room) {
   // 리버브 선택: room 또는 hall
 	// Dry/Wet routing
+	source.disconnect();
+	const { input: reverbIn, output: reverbOut } = createRoomReverb();
+	source.connect(dryGain).connect(audioCtx.destination);
+	source.connect(reverbIn);
+	reverbOut.connect(audioCtx.destination);
+	console.log("room reverb on");
+  } else if (hall) {
 	source.disconnect();
 	const { input: reverbIn, output: reverbOut } = createHallReverb(); // 또는 */createRoomReverb()
 	source.connect(dryGain).connect(audioCtx.destination);
 	source.connect(reverbIn);
 	reverbOut.connect(audioCtx.destination);
-	console.log("reverb on");
-  } else {
+	console.log("hall reverb on");
+  }else {
         source.disconnect();
         source.connect(audioCtx.destination);
         console.log("reverb off");
@@ -132,25 +139,52 @@ function reverb(on) {
   <button id="playButton" class="toggle-btn toggle-off">Play</button>
   </pre>
   <pre>
-  reverb : 
-  <button id="toggleButton" class="toggle-btn toggle-off">OFF</button>
+  room reverb : 
+  <button id="roomButton" class="toggle-btn toggle-off">OFF</button>
+  hall reverb : 
+  <button id="hallButton" class="toggle-btn toggle-off">OFF</button>
   </pre>
   <script>
-    const toggleButton = document.getElementById('toggleButton');
-    let isReverbOn = false;
-
-    toggleButton.addEventListener('click', () => {
-      isReverbOn = !isReverbOn;
-      if (isReverbOn) {
-        toggleButton.textContent = 'OFF';
-        toggleButton.classList.remove('toggle-off');
-        toggleButton.classList.add('toggle-on');
+    const roomButton = document.getElementById('roomButton');
+    let isRoomReverbOn = false;
+    const hallButton = document.getElementById('hallButton');
+    let isHallReverbOn = false;
+	  
+    roomButton.addEventListener('click', () => {
+      isRoomReverbOn = !isRoomReverbOn;
+      if (isRoomReverbOn) {
+        roomButton.textContent = 'OFF';
+        roomButton.classList.remove('toggle-off');
+        roomButton.classList.add('toggle-on');
       } else {
-        toggleButton.textContent = 'ON';
-        toggleButton.classList.remove('toggle-on');
-        toggleButton.classList.add('toggle-off');
+        roomButton.textContent = 'ON';
+        roomButton.classList.remove('toggle-on');
+        roomButton.classList.add('toggle-off');
+	hallButton.textContent = 'OFF';
+        hallButton.classList.remove('toggle-off');
+        hallButton.classList.add('toggle-on');
+	isHallReverbOn = false;
       }
-      reverb(isReverbOn);
+      reverb(isRoomReverbOn, isHallReverbOn);
+    });
+
+
+    hallButton.addEventListener('click', () => {
+      isHallReverbOn = !isHallReverbOn;
+      if (isHallReverbOn) {
+        hallButton.textContent = 'OFF';
+        hallButton.classList.remove('toggle-off');
+        hallButton.classList.add('toggle-on');
+      } else {
+        hallButton.textContent = 'ON';
+        hallButton.classList.remove('toggle-on');
+        hallButton.classList.add('toggle-off');
+	roomButton.textContent = 'OFF';
+        roomButton.classList.remove('toggle-off');
+        roomButton.classList.add('toggle-on');
+        isRoomReverbOn = false;
+      }
+      reverb(isRoomReverbOn, isHallReverbOn);
     });
     const playButton = document.getElementById('playButton');
     let isPlayOn = false;
