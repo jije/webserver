@@ -149,7 +149,10 @@ function reverb(room, hall) {
     let isRoomReverbOn = false;
     const hallButton = document.getElementById('hallButton');
     let isHallReverbOn = false;
-	  
+    roomButton.classList.remove('toggle-off');
+    roomButton.classList.add('toggle-on');
+    hallButton.classList.remove('toggle-off');
+    hallButton.classList.add('toggle-on');
     roomButton.addEventListener('click', () => {
       isRoomReverbOn = !isRoomReverbOn;
       if (isRoomReverbOn) {
