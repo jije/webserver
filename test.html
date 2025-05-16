@@ -106,8 +106,8 @@ function play(toggle) {
   }
 }
 
-function reverb(room, hall) {
-  if (room) {
+function reverb(reverbtype) {
+  if (reverbtype=="room") {
   // 리버브 선택: room 또는 hall
 	// Dry/Wet routing
 	source.disconnect();
@@ -116,7 +116,7 @@ function reverb(room, hall) {
 	source.connect(reverbIn);
 	reverbOut.connect(audioCtx.destination);
 	console.log("room reverb on");
-  } else if (hall) {
+  } else if (reverbtype=="hall") {
 	source.disconnect();
 	const { input: reverbIn, output: reverbOut } = createHallReverb(); // 또는 */createRoomReverb()
 	source.connect(dryGain).connect(audioCtx.destination);
@@ -139,31 +139,60 @@ function reverb(room, hall) {
   <button id="playButton" class="toggle-btn toggle-off">Play</button>
   </pre>
   <pre>
-  room reverb : 
-  <button id="roomButton" class="toggle-btn toggle-off">OFF</button>
-  hall reverb : 
-  <button id="hallButton" class="toggle-btn toggle-off">OFF</button>
+    <h2>리버브 타입을 선택하세요:</h2>
+
+  <label>
+    <input type="radio" name="reverb" value="room" checked>
+    Room
+  </label><br>
+
+  <label>
+    <input type="radio" name="reverb" value="hall">
+    Hall
+  </label><br>
+
+  <label>
+    <input type="radio" name="reverb" value="none">
+    None
+  </label><br><br>
+
+  <p id="result">선택한 리버브: Room</p>
   </pre>
   <script>
-    const roomButton = document.getElementById('roomButton');
+     const radios = document.querySelectorAll('input[name="reverb"]');
+    const result = document.getElementById('result');
+
+    radios.forEach(radio => {
+      radio.addEventListener('change', () => {
+        result.textContent = `선택한 리버브: ${radio.value}`;
+        
+        // 여기에 실제 리버브 타입 변경 로직을 넣을 수 있습니다.
+        // 예: setReverbType(radio.value);
+	reverb(radio.value);
+      });
+    });
+	  
+   /* const roomButton = document.getElementById('roomButton');
     let isRoomReverbOn = false;
     const hallButton = document.getElementById('hallButton');
     let isHallReverbOn = false;
+    const hallButton = document.getElementById('offButton');
+    let off = true;
     roomButton.classList.remove('toggle-off');
     roomButton.classList.add('toggle-on');
     hallButton.classList.remove('toggle-off');
     hallButton.classList.add('toggle-on');
     roomButton.addEventListener('click', () => {
-      isRoomReverbOn = !isRoomReverbOn;
+    isRoomReverbOn = !isRoomReverbOn;
       if (isRoomReverbOn) {
-        roomButton.textContent = 'OFF';
         roomButton.classList.remove('toggle-off');
         roomButton.classList.add('toggle-on');
+	isHallReverbOn = false;
+	hallButton.classList.remove('toggle-on');
+        hallButton.classList.add('toggle-off');
       } else {
-        roomButton.textContent = 'ON';
         roomButton.classList.remove('toggle-on');
         roomButton.classList.add('toggle-off');
-	hallButton.textContent = 'OFF';
         hallButton.classList.remove('toggle-off');
         hallButton.classList.add('toggle-on');
 	isHallReverbOn = false;
@@ -188,7 +217,7 @@ function reverb(room, hall) {
         isRoomReverbOn = false;
       }
       reverb(isRoomReverbOn, isHallReverbOn);
-    });
+    });*/
     const playButton = document.getElementById('playButton');
     let isPlayOn = false;
     playButton.addEventListener('click', () => {
