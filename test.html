@@ -63,11 +63,11 @@ function createRoomReverb() {
   wetGain.gain.value = 0.2;
 
   input.connect(delay);
-  delay.connect(damping);
-  damping.connect(feedback);
-  feedback.connect(delay); // feedback loop
-  damping.connect(wetGain).connect(output);
-
+ // delay.connect(damping);
+ // damping.connect(feedback);
+ // feedback.connect(delay); // feedback loop
+ // damping.connect(wetGain).connect(output);
+  delay.connect(wetGain).connect(output);
   return { input, output };
 }
 
@@ -89,10 +89,11 @@ function createHallReverb() {
   wetGain.gain.value = 0.4;
 
   input.connect(delay);
-  delay.connect(damping);
-  damping.connect(feedback);
-  feedback.connect(delay); // feedback loop
-  damping.connect(wetGain).connect(output);
+//  delay.connect(damping);
+//  damping.connect(feedback);
+//  feedback.connect(delay); // feedback loop
+//  damping.connect(wetGain).connect(output);
+  delay.connect(wetGain).connect(output);
 
 
   return { input, output };
