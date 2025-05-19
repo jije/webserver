@@ -32,9 +32,6 @@
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 const source = audioCtx.createBufferSource();
 const dryGain = audioCtx.createGain();
-dryGain.gain.value = 0.7;
-const wetGain = audioCtx.createGain();
-wetGain.gain.value = 0.3;
 
 // 오디오 소스 연결
 fetch('test.mp3')
@@ -68,6 +65,7 @@ function createRoomReverb() {
   feedback.connect(delay); // feedback loop
   damping.connect(wetGain).connect(output);
  // delay.connect(wetGain).connect(output);
+  dryGain.gain.value = 0.8;
   return { input, output };
 }
 
@@ -94,7 +92,7 @@ function createHallReverb() {
   feedback.connect(delay); // feedback loop
   damping.connect(wetGain).connect(output);
 //  delay.connect(wetGain).connect(output);
-
+  dryGain.gain.value = 0.6;
 
   return { input, output };
 }
