@@ -117,10 +117,16 @@ function reverb(reverbtype) {
 	console.log("room reverb on");
   } else if (reverbtype=="hall") {
 	source.disconnect();
-	const { input: reverbIn, output: reverbOut } = createHallReverb(); // 또는 */createRoomReverb()
+	const delay = audioCtx.createDelay();
+        delay.delayTime.value = 0.05; // 50ms pre-delay
+        const wetGain = audioCtx.createGain();
+        wetGain.gain.value = 0.3;
+	//const { input: reverbIn, output: reverbOut } = createHallReverb(); // 또는 */createRoomReverb()
 	source.connect(dryGain).connect(audioCtx.destination);
-	source.connect(reverbIn);
-	reverbOut.connect(audioCtx.destination);
+	source.connect(delay);
+	delay.connect(wetGain).connect(audioCtx.destination);
+	  //source.connect(reverbIn);
+	//reverbOut.connect(audioCtx.destination);
 	console.log("hall reverb on");
   }else {
         source.disconnect();
