@@ -64,7 +64,6 @@ function createRoomReverb() {
   damping.connect(feedback);
   feedback.connect(delay); // feedback loop
   damping.connect(wetGain).connect(output);
- // delay.connect(wetGain).connect(output);
   dryGain.gain.value = 0.8;
   return { input, output };
 }
